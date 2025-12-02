@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ball Simulation</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>Ball Wall Collision Simulator</h1>
+
+<div id="controls">
+
+    <label>Circle Size:
+        <input type="number" id="circleSize" value="400">
+    </label>
+
+    <label>Ball Size:
+        <input type="number" id="ballSize" value="20">
+    </label>
+
+    <label>Ball Speed:
+        <input type="number" id="ballSpeed" value="3">
+    </label>
+
+    <button id="applyBtn">Apply</button>
+    <button id="stopBtn">Start/Stop</button>
+
+    <br><br>
+
+    <!-- SOUND CONTROLS -->
+    <label>Sound:
+        <select id="soundSelect">
+            <option value="none">No Sound</option>
+            <option value="ding-101377.mp3">Ding</option>
+            <option value="glass-knock-1-189096.mp3">Glass Knock</option>
+            <option value="mixkit-drum-bass-hit-2294.wav">Drum Bass Hit</option>
+            <option value="mixkit-hand-tribal-drum-562.wav">Hand Tribal Drum</option>
+            <option value="mixkit-on-or-off-light-switch-tap-2585.wav">Light Switch Tap</option>
+            <option value="mixkit-tribal-dry-drum-558.wav">Dry Tribal Drum</option>
+        </select>
+    </label>
+
+    <button id="enableSoundBtn">Enable Sound</button>
+
+</div>
+
+<div id="circle"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
