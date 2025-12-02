@@ -1,9 +1,10 @@
 const circle = document.getElementById("circle");
 const applyBtn = document.getElementById("applyBtn");
 const stopBtn = document.getElementById("stopBtn");
+const clearBtn = document.getElementById("clearBtn");
 
 let balls = [];
-let running = true;
+let running = false;   // 🔥 Balls do NOT start automatically
 
 // ---- SOUND SYSTEM ----
 let soundEnabled = false;
@@ -12,10 +13,14 @@ let bounceSound = null;
 const soundSelect = document.getElementById("soundSelect");
 const enableSoundBtn = document.getElementById("enableSoundBtn");
 
-// Apply settings (DO NOT restart ball)
+
+// ------------------- BUTTON LOGIC -------------------
+
+// Apply settings → stop movement, clear balls, user must press Start
 applyBtn.addEventListener("click", () => {
+    stopSimulation();
+    clearBalls();
     updateCircleSettings();
-    updateBallSettings();
 });
 
 // Start/Stop button
@@ -23,7 +28,20 @@ stopBtn.addEventListener("click", () => {
     running = !running;
 
     stopBtn.textContent = running ? "Stop" : "Start";
+
+    // Start first ball if no balls exist
+    if (running && balls.length === 0) {
+        setupBall();
+    }
 });
+
+// Clear button
+clearBtn.addEventListener("click", () => {
+    stopSimulation();
+    clearBalls();
+    stopBtn.textContent = "Start";
+});
+
 
 // Toggle sound ON/OFF
 enableSoundBtn.addEventListener("click", () => {
@@ -39,12 +57,12 @@ enableSoundBtn.addEventListener("click", () => {
     enableSoundBtn.textContent = "Disable Sound";
 });
 
-// Load sound when dropdown changes
+// Load sound immediately when changed
 soundSelect.addEventListener("change", () => {
     if (soundEnabled) loadSelectedSound();
 });
 
-// Load audio from dropdown selection
+
 function loadSelectedSound() {
     const selected = soundSelect.value;
 
@@ -58,9 +76,18 @@ function loadSelectedSound() {
 }
 
 
-// ---- UPDATE SETTINGS WITHOUT RESET ----
+// ------------------- SETUP / RESET HELPERS -------------------
 
-// Change circle size only
+function stopSimulation() {
+    running = false;
+    stopBtn.textContent = "Start";
+}
+
+function clearBalls() {
+    balls = [];
+    circle.innerHTML = "";
+}
+
 function updateCircleSettings() {
     let circleSize = parseInt(document.getElementById("circleSize").value);
 
@@ -74,25 +101,25 @@ function updateCircleSettings() {
     circle.style.height = circleSize + "px";
 }
 
-// Change ball size and speed without resetting
-function updateBallSettings() {
-    const newSize = parseInt(document.getElementById("ballSize").value);
-    const newSpeed = parseInt(document.getElementById("ballSpeed").value);
 
-    balls.forEach(ball => {
-        ball.size = newSize;
-        ball.element.style.width = newSize + "px";
-        ball.element.style.height = newSize + "px";
+// ------------------- BALL SETUP -------------------
 
-        // Keep direction but adjust magnitude
-        const angle = Math.atan2(ball.dy, ball.dx);
-        ball.dx = Math.cos(angle) * newSpeed;
-        ball.dy = Math.sin(angle) * newSpeed;
-    });
+function setupBall() {
+    clearBalls();
+
+    const circleSize = circle.offsetWidth;
+    const ballSize = parseInt(document.getElementById("ballSize").value);
+    const speed = parseInt(document.getElementById("ballSpeed").value);
+
+    // Random direction
+    const angle = Math.random() * Math.PI * 2;
+    const dx = Math.cos(angle) * speed;
+    const dy = Math.sin(angle) * speed;
+
+    // Create initial ball
+    balls.push(createBall(circleSize / 2, circleSize / 2, dx, dy, ballSize));
 }
 
-
-// ---- CREATE BALL ----
 function createBall(x, y, dx, dy, size) {
     const ball = document.createElement("div");
     ball.classList.add("ball");
@@ -106,29 +133,8 @@ function createBall(x, y, dx, dy, size) {
 }
 
 
-// ---- SETUP (initial creation only once) ----
-function setup() {
-    balls = [];
-    circle.innerHTML = "";
+// ------------------- ANIMATION LOOP -------------------
 
-    const circleSize = parseInt(document.getElementById("circleSize").value);
-    const ballSize = parseInt(document.getElementById("ballSize").value);
-    const speed = parseInt(document.getElementById("ballSpeed").value);
-
-    circle.style.width = circleSize + "px";
-    circle.style.height = circleSize + "px";
-
-    // Random direction
-    const angle = Math.random() * Math.PI * 2;
-    const dx = Math.cos(angle) * speed;
-    const dy = Math.sin(angle) * speed;
-
-    // Create initial ball
-    balls.push(createBall(circleSize / 2, circleSize / 2, dx, dy, ballSize));
-}
-
-
-// ---- ANIMATION LOOP ----
 function animate() {
     requestAnimationFrame(animate);
 
@@ -174,6 +180,5 @@ function animate() {
 }
 
 
-// Start
-setup();
+// Start animation loop
 animate();
